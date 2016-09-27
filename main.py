@@ -21,7 +21,9 @@ class BlogHandler(webapp2.RequestHandler):
         """
 
         # TODO - filter the query so that only posts by the given user
-        return None
+
+        query = Post.all().filter('author', user).order('-created')
+        return query.fetch(limit=limit, offset=offset)
 
     def get_user_by_name(self, username):
         """ Get a user object from the db, based on their username """
@@ -154,7 +156,7 @@ class ViewPostHandler(BlogHandler):
 
         post = Post.get_by_id(int(id))
         if post:
-            t = jinja_env.get_template("post.html")
+            t = jinja_env.get_template("post.html.")
             response = t.render(post=post)
         else:
             error = "there is no post with id %s" % id
@@ -274,6 +276,7 @@ class LoginHandler(BlogHandler):
         submitted_password = self.request.get("password")
 
         # get the user from the database
+
         user = self.get_user_by_name(submitted_username)
 
         if not user:
